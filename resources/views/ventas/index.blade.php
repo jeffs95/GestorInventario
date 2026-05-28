@@ -52,11 +52,17 @@
 
     {{-- Buscador de código --}}
     <div class="card mb-4">
-      <div class="card-header pb-0">
-        <h6 class="mb-0">
-          <i class="fas fa-barcode me-2 text-primary"></i>Buscar zapato
-        </h6>
-        <p class="text-xs text-secondary mb-0 mt-1">Ingresa el código único del zapato a vender</p>
+      <div class="card-header pb-0 d-flex justify-content-between align-items-start">
+        <div>
+          <h6 class="mb-0">
+            <i class="fas fa-barcode me-2 text-primary"></i>Buscar zapato
+          </h6>
+          <p class="text-xs text-secondary mb-0 mt-1">Ingresa el código único del zapato a vender</p>
+        </div>
+        <a href="{{ route('ventas.historial') }}" class="btn btn-outline-primary btn-sm py-1 px-2 flex-shrink-0"
+           style="font-size:.75rem">
+          <i class="fas fa-book me-1"></i>Historial
+        </a>
       </div>
       <div class="card-body">
         <form method="GET" action="{{ route('ventas.index') }}" id="formBuscar">
@@ -205,11 +211,34 @@
   {{-- ══ Columna derecha: ventas del día ═════════════════════════════════ --}}
   <div class="col-lg-7">
     <div class="card h-100">
-      <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-        <h6 class="mb-0">
-          <i class="fas fa-receipt me-2 text-success"></i>Ventas de hoy
-        </h6>
-        <span class="badge bg-gradient-success">{{ $statsHoy['cantidad'] }} registros</span>
+      <div class="card-header pb-0 d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <div>
+          <h6 class="mb-0">
+            <i class="fas fa-receipt me-2 text-success"></i>Ventas de hoy
+          </h6>
+          <p class="text-xs text-secondary mb-0 mt-1" id="fechaHoyLabel">
+            {{-- Guatemala: UTC-6, sin horario de verano --}}
+            @php
+              $hoyGT = now(); // ya con timezone America/Guatemala desde config
+              $dias  = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+              $meses = ['','enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+            @endphp
+            {{ ucfirst($dias[$hoyGT->dayOfWeek]) }},
+            {{ $hoyGT->day }} de {{ $meses[$hoyGT->month] }} {{ $hoyGT->year }}
+          </p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+          <span class="badge bg-gradient-success">{{ $statsHoy['cantidad'] }} registros</span>
+          <a href="{{ route('ventas.historial') }}" class="btn btn-outline-primary btn-sm py-1 px-2"
+             style="font-size:.75rem">
+            <i class="fas fa-book me-1"></i>Ver historial
+          </a>
+        </div>
+      </div>
+      {{-- Aviso de nuevo día (oculto por defecto, JS lo muestra) --}}
+      <div id="alertaNuevoDia" class="d-none mx-3 mt-2 alert alert-info py-2 px-3 text-sm d-flex align-items-center gap-2">
+        <i class="fas fa-sun text-warning"></i>
+        <span>¡Nuevo día! Actualizando la lista de ventas...</span>
       </div>
       <div class="card-body px-0 pt-0 pb-0" style="overflow-y:auto;max-height:620px">
         <div class="table-responsive">
@@ -222,6 +251,7 @@
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Lista</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Vendido</th>
                 <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Dif.</th>
+                <th class="text-secondary opacity-7"></th>
               </tr>
             </thead>
             <tbody>
@@ -253,6 +283,12 @@
                   <span class="text-xs font-weight-bold {{ $dif >= 0 ? 'text-success' : 'text-danger' }}">
                     {{ $dif >= 0 ? '+' : '' }}Q{{ number_format($dif, 2) }}
                   </span>
+                </td>
+                <td class="pe-3 text-end">
+                  <a href="{{ route('ventas.recibo', $venta) }}" target="_blank"
+                     class="btn btn-link p-0 text-primary text-xs" title="Ver / imprimir recibo">
+                    <i class="fas fa-print"></i>
+                  </a>
                 </td>
               </tr>
               @empty
@@ -507,5 +543,42 @@ if (inputCodigo) {
     }, 80);
   });
 }
+
+// ══ Auto-refresh al cambiar de día (zona horaria Guatemala = UTC-6 fija) ══════
+(function () {
+  // Fecha de hoy según el servidor (ya en hora de Guatemala gracias a config/app.php)
+  const HOY_SERVIDOR = '{{ now()->toDateString() }}'; // ej. "2026-05-28"
+
+  /**
+   * Calcula la fecha actual en Guatemala (UTC-6, sin horario de verano)
+   * directamente desde el navegador, sin confiar en el timezone local del device.
+   */
+  function fechaGuatemala() {
+    const ahora   = new Date();
+    // Offset Guatemala es -360 minutos respecto UTC
+    const offsetMs = -6 * 60 * 60 * 1000;
+    const gt       = new Date(ahora.getTime() + ahora.getTimezoneOffset() * 60 * 1000 + offsetMs);
+    const yy = gt.getFullYear();
+    const mm = String(gt.getMonth() + 1).padStart(2, '0');
+    const dd = String(gt.getDate()).padStart(2, '0');
+    return `${yy}-${mm}-${dd}`;
+  }
+
+  function verificarCambioDia() {
+    const hoyBrowser = fechaGuatemala();
+    if (hoyBrowser !== HOY_SERVIDOR) {
+      // Nuevo día detectado — mostrar aviso y recargar tras 2 s
+      const alerta = document.getElementById('alertaNuevoDia');
+      if (alerta) alerta.classList.remove('d-none');
+      setTimeout(() => {
+        // Recarga limpia (sin el parámetro ?codigo= si estaba presente)
+        window.location.href = '{{ route('ventas.index') }}';
+      }, 2000);
+    }
+  }
+
+  // Revisar cada 60 segundos
+  setInterval(verificarCambioDia, 60_000);
+})();
 </script>
 @endpush

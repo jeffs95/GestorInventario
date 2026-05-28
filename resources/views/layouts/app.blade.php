@@ -55,8 +55,47 @@
     .swal2-html-container { font-size: 0.875rem !important; color: #67748e !important; }
     .swal2-actions { gap: 0.5rem !important; margin-top: 1.25rem !important; }
   </style>
-  <!-- Toastify -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <!-- Hot Toast (react-hot-toast style) -->
+  <style>
+    #ht-container {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+      z-index: 99999; display: flex; flex-direction: column;
+      gap: 8px; align-items: center; pointer-events: none;
+    }
+    .ht-toast {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 3px 10px rgba(0,0,0,.12), 0 1px 3px rgba(0,0,0,.08);
+      padding: 10px 16px 10px 12px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 14px; font-weight: 500; color: #363636; line-height: 1.4;
+      max-width: 380px; min-width: 230px;
+      pointer-events: auto; cursor: pointer;
+      animation: ht-in .35s cubic-bezier(.21,1.02,.73,1) forwards;
+      will-change: transform, opacity;
+    }
+    .ht-toast.ht-out {
+      animation: ht-out .3s cubic-bezier(.06,.71,.55,1) forwards;
+    }
+    .ht-icon {
+      width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: #fff;
+    }
+    .ht-success { background: #61d345; }
+    .ht-error   { background: #ff4b4b; }
+    .ht-warning { background: #f59e0b; }
+    .ht-info    { background: #0ea5e9; }
+    @keyframes ht-in {
+      from { opacity: 0; transform: translateY(-14px) scale(.88); }
+      to   { opacity: 1; transform: translateY(0)     scale(1);   }
+    }
+    @keyframes ht-out {
+      from { opacity: 1; transform: translateY(0)      scale(1);   }
+      to   { opacity: 0; transform: translateY(-10px)  scale(.88); }
+    }
+  </style>
   <!-- SweetAlert2 -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
   @stack('styles')
@@ -89,8 +128,45 @@
     }
   </script>
 
-  <!-- Toastify -->
-  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+  <!-- Hot Toast -->
+  <script>
+  (function () {
+    const _c = document.createElement('div');
+    _c.id = 'ht-container';
+    document.body.appendChild(_c);
+
+    const _icons = { success:'✓', error:'✕', warning:'!', info:'i' };
+
+    function _show(msg, type, dur) {
+      const t = document.createElement('div');
+      t.className = 'ht-toast';
+      t.innerHTML =
+        `<span class="ht-icon ht-${type}">${_icons[type]}</span>` +
+        `<span>${msg}</span>`;
+
+      const _dismiss = () => {
+        if (t._gone) return; t._gone = true;
+        clearTimeout(t._tid);
+        t.classList.add('ht-out');
+        t.addEventListener('animationend', () => t.remove(), { once: true });
+      };
+
+      t.addEventListener('click', _dismiss);
+      t.addEventListener('mouseenter', () => clearTimeout(t._tid));
+      t.addEventListener('mouseleave', () => { t._tid = setTimeout(_dismiss, 1500); });
+
+      _c.appendChild(t);
+      t._tid = setTimeout(_dismiss, dur);
+    }
+
+    window.toast = {
+      success: (m, d=4000) => _show(m, 'success', d),
+      error:   (m, d=4000) => _show(m, 'error',   d),
+      warning: (m, d=4000) => _show(m, 'warning', d),
+      info:    (m, d=4000) => _show(m, 'info',    d),
+    };
+  })();
+  </script>
   <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
   <script>

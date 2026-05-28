@@ -15,6 +15,7 @@ use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
 use App\Http\Controllers\SucursalesController;
 use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\DevolucionesController;
 use App\Http\Controllers\VentasController;
 use Illuminate\Support\Facades\Route;
 
@@ -40,6 +41,13 @@ Route::group(['middleware' => 'auth'], function () {
     // ── Ventas / Punto de venta ─────────────────────────────────────────
     Route::get('ventas', [VentasController::class, 'index'])->name('ventas.index');
     Route::post('ventas', [VentasController::class, 'store'])->name('ventas.store');
+    Route::get('ventas/historial', [VentasController::class, 'historial'])->name('ventas.historial');
+    Route::get('ventas/{venta}/recibo', [VentasController::class, 'recibo'])->name('ventas.recibo');
+
+    // ── Devoluciones ────────────────────────────────────────────────────
+    Route::get('devoluciones', [DevolucionesController::class, 'index'])->name('devoluciones.index');
+    Route::get('devoluciones/create', [DevolucionesController::class, 'create'])->name('devoluciones.create');
+    Route::post('devoluciones', [DevolucionesController::class, 'store'])->name('devoluciones.store');
 
     // ── Lotes de compra ─────────────────────────────────────────────────
     Route::get('lotes', [LotesController::class, 'index'])->name('lotes.index');

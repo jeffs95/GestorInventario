@@ -35,6 +35,11 @@ class Venta extends Model
         return $this->belongsTo(User::class, 'usuario_id');
     }
 
+    public function devolucion()
+    {
+        return $this->hasOne(Devolucion::class);
+    }
+
     // ── Accessors ────────────────────────────────────────────────────────────
 
     /** Diferencia entre precio lista y precio real cobrado */

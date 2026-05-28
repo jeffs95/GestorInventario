@@ -66,12 +66,32 @@
       </li>
 
       <li class="nav-item">
-        <a class="nav-link {{ Request::is('ventas*') ? 'active' : '' }}" href="{{ url('ventas') }}">
+        <a class="nav-link {{ Request::is('ventas') && !Request::is('ventas/historial*') ? 'active' : '' }}" href="{{ url('ventas') }}">
           <div class="icon icon-shape icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
-               style="background:{{ Request::is('ventas*') ? 'linear-gradient(310deg,#1a3c5e,#0ea5e9)' : 'rgba(30,96,145,.13)' }}">
-            <i class="fas fa-cash-register" style="color:{{ Request::is('ventas*') ? '#fff' : '#344767' }};font-size:.75rem"></i>
+               style="background:{{ Request::is('ventas') && !Request::is('ventas/historial*') ? 'linear-gradient(310deg,#1a3c5e,#0ea5e9)' : 'rgba(30,96,145,.13)' }}">
+            <i class="fas fa-cash-register" style="color:{{ Request::is('ventas') && !Request::is('ventas/historial*') ? '#fff' : '#344767' }};font-size:.75rem"></i>
           </div>
           <span class="nav-link-text ms-1">Registrar venta</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('ventas/historial*') ? 'active' : '' }}" href="{{ url('ventas/historial') }}">
+          <div class="icon icon-shape icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
+               style="background:{{ Request::is('ventas/historial*') ? 'linear-gradient(310deg,#1a3c5e,#0ea5e9)' : 'rgba(30,96,145,.13)' }}">
+            <i class="fas fa-book" style="color:{{ Request::is('ventas/historial*') ? '#fff' : '#344767' }};font-size:.75rem"></i>
+          </div>
+          <span class="nav-link-text ms-1">Historial de ventas</span>
+        </a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link {{ Request::is('devoluciones*') ? 'active' : '' }}" href="{{ url('devoluciones') }}">
+          <div class="icon icon-shape icon-sm shadow border-radius-md text-center me-2 d-flex align-items-center justify-content-center"
+               style="background:{{ Request::is('devoluciones*') ? 'linear-gradient(310deg,#1a3c5e,#0ea5e9)' : 'rgba(30,96,145,.13)' }}">
+            <i class="fas fa-undo" style="color:{{ Request::is('devoluciones*') ? '#fff' : '#344767' }};font-size:.75rem"></i>
+          </div>
+          <span class="nav-link-text ms-1">Devoluciones</span>
         </a>
       </li>
 

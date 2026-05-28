@@ -603,12 +603,7 @@ document.querySelectorAll('.foto-input').forEach(activarPreviewFoto);
 // ── Agregar foto extra ───────────────────────────────────────────────────────
 document.getElementById('btnAgregarFoto').addEventListener('click', function () {
   if (fotoCount >= MAX_FOTOS) {
-    Toastify({
-      text: `Máximo ${MAX_FOTOS} fotos por zapato.`,
-      duration: 3000,
-      gravity: 'top', position: 'right',
-      style: { background: '#f5365c', borderRadius: '.5rem', fontSize: '.82rem' },
-    }).showToast();
+    toast.warning(`Máximo ${MAX_FOTOS} fotos por zapato.`);
     return;
   }
 

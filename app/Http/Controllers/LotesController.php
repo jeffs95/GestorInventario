@@ -74,11 +74,47 @@ class LotesController extends Controller
         $lote->load([
             'proveedor',
             'sucursalDestino',
-            'costales.zapatos',
+            'costales.zapatos.venta',
             'aperturas.costales',
-            'aperturas.zapatos',
+            'aperturas.zapatos.venta',
         ]);
 
-        return view('lotes.show', compact('lote'));
+        // ── Rentabilidad ─────────────────────────────────────────────────────
+        // Recopilar todos los zapatos únicos del lote (regular + primera)
+        $todosZapatos = collect();
+        foreach ($lote->costales as $costal) {
+            $todosZapatos = $todosZapatos->merge($costal->zapatos);
+        }
+        foreach ($lote->aperturas as $apertura) {
+            $todosZapatos = $todosZapatos->merge($apertura->zapatos);
+        }
+        $todosZapatos = $todosZapatos->unique('id');
+
+        $costoTotal      = (float) $lote->costo_total;
+        $zapVendidos     = $todosZapatos->where('estado', 'vendido');
+        $zapInventario   = $todosZapatos->where('estado', 'en_inventario');
+        $zapSinPrecio    = $todosZapatos->where('estado', 'pendiente_precio');
+
+        $ingresosVentas  = $zapVendidos->sum(fn ($z) => (float) ($z->venta?->precio_venta ?? 0));
+        $valorInventario = $zapInventario->sum(fn ($z) => (float) $z->precio_lista);
+
+        $gananciaReal      = $ingresosVentas - $costoTotal;
+        $gananciaPotencial = ($ingresosVentas + $valorInventario) - $costoTotal;
+        $pctRecuperado     = $costoTotal > 0 ? ($ingresosVentas / $costoTotal) * 100 : 0;
+
+        $rentabilidad = [
+            'costo_total'        => $costoTotal,
+            'ingresos_ventas'    => $ingresosVentas,
+            'valor_inventario'   => $valorInventario,
+            'ganancia_real'      => $gananciaReal,
+            'ganancia_potencial' => $gananciaPotencial,
+            'pct_recuperado'     => $pctRecuperado,
+            'total_zapatos'      => $todosZapatos->count(),
+            'vendidos'           => $zapVendidos->count(),
+            'en_inventario'      => $zapInventario->count(),
+            'sin_precio'         => $zapSinPrecio->count(),
+        ];
+
+        return view('lotes.show', compact('lote', 'rentabilidad'));
     }
 }

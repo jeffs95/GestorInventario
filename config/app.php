@@ -71,7 +71,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'America/Guatemala',   // UTC-6, sin horario de verano
 
     /*
     |--------------------------------------------------------------------------

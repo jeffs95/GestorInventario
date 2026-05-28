@@ -333,92 +333,93 @@
     </button>
   </div>
 
-  {{-- ── Cuerpo colapsable: tabla de zapatos ─────────────────────────────── --}}
+  {{-- ── Cuerpo colapsable: cards de zapatos ────────────────────────────── --}}
   <div class="collapse" id="{{ $collapseId }}">
 
-    <div class="table-responsive" style="border-top:1px solid #f0f0f0">
-      <table class="table align-middle mb-0">
-        <thead style="background:#f8f9fa">
-          <tr>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-3">Foto</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Código</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Categoría / Tipo</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Talla</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Color / Marca</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Precio Q</th>
-            <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Estado</th>
-          </tr>
-        </thead>
-        <tbody>
-          @forelse($zapatos as $z)
-          <tr>
-            {{-- Foto --}}
-            <td class="ps-3">
+    @if($zapatos->isEmpty())
+      <div class="text-center py-4 text-secondary text-xs" style="border-top:1px solid #f0f0f0">
+        No hay zapatos que coincidan con los filtros en este lote.
+      </div>
+    @else
+    <div class="p-3" style="border-top:1px solid #f0f0f0;background:#fafafa">
+      <div class="row g-2">
+        @foreach($zapatos as $z)
+        @php
+          $clsBadge2 = ['regular'=>'secondary','primera_lavado'=>'warning','primera_lustre'=>'info'];
+        @endphp
+        <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+          <div class="card h-100 shadow-sm zapato-card" style="border-radius:.875rem;overflow:hidden;cursor:pointer"
+               data-src="{{ $z->foto_path ? route('inventario.foto', $z) : '' }}"
+               data-codigo="{{ $z->codigo_unico }}">
+
+            {{-- ── Foto ── --}}
+            <div class="position-relative" style="height:130px;background:#f0f2f5">
               @if($z->foto_path)
                 <img src="{{ route('inventario.foto', $z) }}"
-                     alt="foto"
-                     class="avatar avatar-md border-radius-md shadow foto-thumb"
-                     style="width:44px;height:44px;object-fit:cover;cursor:pointer"
-                     data-src="{{ route('inventario.foto', $z) }}"
-                     data-codigo="{{ $z->codigo_unico }}">
+                     alt="{{ $z->codigo_unico }}"
+                     class="w-100 h-100"
+                     style="object-fit:cover">
               @else
-                <div class="avatar avatar-md border-radius-md bg-gradient-light d-flex align-items-center justify-content-center"
-                     style="width:44px;height:44px">
-                  <i class="fas fa-image text-secondary opacity-5"></i>
+                <div class="w-100 h-100 d-flex align-items-center justify-content-center">
+                  <i class="fas fa-shoe-prints fa-2x text-secondary opacity-3"></i>
                 </div>
               @endif
-            </td>
 
-            {{-- Código --}}
-            <td class="ps-2">
-              <span class="text-xs font-weight-bold font-monospace text-primary">
-                {{ $z->codigo_unico }}
-              </span>
-            </td>
-
-            {{-- Categoría / Tipo --}}
-            <td class="ps-2">
-              <p class="text-xs font-weight-bold mb-0">{{ $z->categoria->nombre ?? '—' }}</p>
-              <p class="text-xxs text-secondary mb-0">{{ $z->tipo->nombre ?? '—' }}</p>
-            </td>
-
-            {{-- Talla --}}
-            <td class="ps-2">
-              <span class="badge badge-sm bg-gradient-dark">
-                {{ $z->talla->nombre ?? $z->talla ?? '—' }}
-              </span>
-            </td>
-
-            {{-- Color / Marca --}}
-            <td class="ps-2">
-              <p class="text-xs mb-0">{{ $z->color ?? '—' }}</p>
-              <p class="text-xxs text-secondary mb-0">{{ $z->marca ?? '—' }}</p>
-            </td>
-
-            {{-- Precio --}}
-            <td class="ps-2">
-              <span class="text-xs font-weight-bold text-success">
-                Q{{ number_format($z->precio_lista, 2) }}
-              </span>
-            </td>
-
-            {{-- Estado --}}
-            <td class="ps-2">
-              <span class="badge badge-sm bg-gradient-{{ $z->estado_color }}">
+              {{-- Badge estado encima de la foto --}}
+              <span class="position-absolute top-0 end-0 m-1 badge badge-sm bg-gradient-{{ $z->estado_color }}"
+                    style="font-size:.6rem">
                 {{ $z->estado_label }}
               </span>
-            </td>
-          </tr>
-          @empty
-          <tr>
-            <td colspan="7" class="text-center py-3 text-secondary text-xs">
-              No hay zapatos que coincidan con los filtros en este lote.
-            </td>
-          </tr>
-          @endforelse
-        </tbody>
-      </table>
+            </div>
+
+            {{-- ── Info ── --}}
+            <div class="card-body p-2">
+              {{-- Código --}}
+              <p class="text-xxs font-monospace font-weight-bold text-primary mb-1 lh-1"
+                 style="font-size:.68rem;letter-spacing:.03em">
+                {{ $z->codigo_unico }}
+              </p>
+
+              {{-- Categoría + tipo --}}
+              <p class="text-xxs text-dark font-weight-bold mb-0 lh-1">
+                {{ $z->categoria->nombre ?? '—' }}
+              </p>
+              <p class="text-xxs text-secondary mb-1 lh-1">
+                {{ $z->tipo->nombre ?? '—' }}
+              </p>
+
+              {{-- Badges: talla + clasificación --}}
+              <div class="d-flex gap-1 flex-wrap mb-1">
+                @if($z->talla)
+                  <span class="badge bg-gradient-dark" style="font-size:.58rem">
+                    {{ $z->talla->nombre ?? $z->talla }}
+                  </span>
+                @endif
+                <span class="badge bg-gradient-{{ $clsBadge2[$z->clasificacion] ?? 'secondary' }}"
+                      style="font-size:.58rem">
+                  {{ $z->clasificacion_label }}
+                </span>
+              </div>
+
+              {{-- Color / Marca --}}
+              @if($z->color || $z->marca)
+              <p class="text-xxs text-secondary mb-1 lh-1">
+                {{ implode(' · ', array_filter([$z->color, $z->marca])) }}
+              </p>
+              @endif
+
+              {{-- Precio --}}
+              <p class="text-sm font-weight-bolder text-success mb-0 lh-1">
+                Q{{ number_format($z->precio_lista, 0) }}
+              </p>
+            </div>
+
+          </div>
+        </div>
+        @endforeach
+      </div>
     </div>
+    @endif
 
     {{-- Pie del acordeón: enlace a preparación --}}
     <div class="px-3 py-2 d-flex justify-content-between align-items-center"
@@ -477,6 +478,12 @@
 
 @push('styles')
 <style>
+  /* ── Cards de zapatos ─── */
+  .zapato-card { transition: transform .15s, box-shadow .15s; }
+  .zapato-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,.12) !important; }
+  .zapato-card img { transition: opacity .2s; }
+  .zapato-card:hover img { opacity: .92; }
+
   /* ── Botón de acordeón personalizado ─── */
   .lote-toggle-btn {
     background: none;
@@ -538,10 +545,12 @@ document.addEventListener('DOMContentLoaded', () => {
   const imgEl    = document.getElementById('modalFotoImg');
   const codigoEl = document.getElementById('modalFotoCodigo');
 
-  document.querySelectorAll('.foto-thumb').forEach(img => {
-    img.addEventListener('click', () => {
-      imgEl.src = img.dataset.src;
-      codigoEl.textContent = img.dataset.codigo;
+  // Lightbox: cards de zapatos (foto en la card)
+  document.querySelectorAll('.zapato-card').forEach(card => {
+    card.addEventListener('click', () => {
+      if (!card.dataset.src) return; // sin foto, no abrir
+      imgEl.src = card.dataset.src;
+      codigoEl.textContent = card.dataset.codigo;
       modal.show();
     });
   });
