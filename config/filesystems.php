@@ -42,6 +42,18 @@ return [
             'visibility' => 'public',
         ],
 
+        'ftp_documents' => [
+            'driver'   => 'ftp',
+            'host'     => env('FTP_HOST', '127.0.0.1'),
+            'username' => env('FTP_USERNAME'),
+            'password' => env('FTP_PASSWORD'),
+            'port'     => (int) env('FTP_PORT', 21),
+            'root'     => env('FTP_ROOT', '/'),
+            'passive'  => true,
+            'ssl'      => env('FTP_SSL', false),
+            'timeout'  => 30,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

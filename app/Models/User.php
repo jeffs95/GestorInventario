@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,11 +11,8 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var string[]
-     */
+    protected $table = 'usuario';
+
     protected $fillable = [
         'name',
         'email',
@@ -24,25 +20,45 @@ class User extends Authenticatable
         'phone',
         'location',
         'about_me',
+        'sucursal_id',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-    
+
+    // ── Relaciones ──────────────────────────────────────────────────────────
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class);
+    }
+
+    public function roles()
+    {
+        return $this->belongsToMany(Rol::class, 'rol_usuario', 'usuario_id', 'rol_id')
+                    ->withTimestamps();
+    }
+
+    // ── Helpers de rol ──────────────────────────────────────────────────────
+
+    public function hasRole(string $slug): bool
+    {
+        return $this->roles->contains('slug', $slug);
+    }
+
+    public function isDueno(): bool     { return $this->hasRole('dueno'); }
+    public function isEncargado(): bool { return $this->hasRole('encargado'); }
+    public function isPreparador(): bool{ return $this->hasRole('preparador'); }
+
+    /** Etiqueta del primer rol asignado (para mostrar en UI) */
+    public function getRolLabelAttribute(): string
+    {
+        return $this->roles->first()?->nombre ?? '—';
+    }
 }

@@ -1,0 +1,202 @@
+/**
+ * PacaManager — Paleta Azul Océano
+ * Override sobre soft-ui-dashboard.css
+ *
+ * Primario oscuro : #1a3c5e  (navy profundo)
+ * Primario medio  : #1e6091  (azul marino)
+ * Primario claro  : #0ea5e9  (sky blue)
+ * Gradiente       : 310deg, #1a3c5e → #0ea5e9
+ */
+
+/* ─── 1. Variables CSS de Bootstrap ──────────────────────────────────────── */
+:root {
+  --bs-primary: #1e6091;
+}
+
+/* ─── 2. Gradiente primario (tarjetas, badges, iconos, barras) ───────────── */
+.bg-gradient-primary {
+  background-image: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+}
+
+/* ─── 3. Botones sólidos gradient-primary ────────────────────────────────── */
+.btn.bg-gradient-primary,
+.btn.bg-gradient-primary:hover {
+  background-image: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+}
+.btn.bg-gradient-primary:focus,
+.btn.bg-gradient-primary.focus {
+  color: #fff !important;
+  box-shadow: 0 3px 5px -1px rgba(26, 60, 94, 0.4), 0 2px 3px -1px rgba(14, 165, 233, 0.25) !important;
+}
+.btn.bg-gradient-primary:not(:disabled):not(.disabled):not(.active) {
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 1px solid #1e6091 !important;
+  color: #1e6091 !important;
+}
+.btn.bg-gradient-primary:not(:disabled):not(.disabled).active,
+.btn.bg-gradient-primary:not(:disabled):not(.disabled):active {
+  background-color: #1a3c5e !important;
+  background-image: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+  color: #fff !important;
+}
+
+/* ─── 4. Botón primario Bootstrap estándar ───────────────────────────────── */
+.btn-primary {
+  background-color: #1e6091 !important;
+  border-color: #1e6091 !important;
+  color: #fff !important;
+}
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: #1a3c5e !important;
+  border-color: #1a3c5e !important;
+}
+
+/* ─── 5. Botón outline-primary ───────────────────────────────────────────── */
+.btn-outline-primary {
+  border-color: #1e6091 !important;
+  color: #1e6091 !important;
+}
+.btn-outline-primary:hover,
+.btn-outline-primary:focus,
+.btn-outline-primary:active,
+.btn-outline-primary.active {
+  background-color: #1e6091 !important;
+  border-color: #1e6091 !important;
+  color: #fff !important;
+}
+
+/* ─── 6. Texto primario ──────────────────────────────────────────────────── */
+.text-primary {
+  color: #1e6091 !important;
+  background-image: none !important;
+  -webkit-background-clip: border-box !important;
+  background-clip: border-box !important;
+  /* Cancelar el transparent que usa el tema para gradient-text */
+  -webkit-text-fill-color: #1e6091 !important;
+}
+/* Iconos FA dentro de .text-primary no deben heredar gradient tricks */
+.text-primary i,
+.text-primary .fas,
+.text-primary .far,
+.text-primary .fab {
+  -webkit-text-fill-color: inherit !important;
+  color: inherit !important;
+}
+.text-gradient.text-primary {
+  background-image: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+}
+
+/* ─── 7. Borde primario ──────────────────────────────────────────────────── */
+.border-primary {
+  border-color: #1e6091 !important;
+}
+
+/* ─── 8. Sidebar — nav link activo ──────────────────────────────────────────
+   El ícono activo en el sidebar usa la variable de color del tema.         */
+.sidenav .nav-link.active .icon i,
+.sidenav .nav-link.active .icon svg .color-background,
+.sidenav .nav-link.active .nav-link-text {
+  color: #1e6091 !important;
+}
+/* El dot / indicador de ruta activa */
+.sidenav .nav-link.active {
+  background: #fff !important;
+}
+/* Contenedor del icono en nav activo */
+.sidenav .nav-link.active .icon {
+  background: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+}
+
+/* ─── 9. Barra de progreso primario ─────────────────────────────────────── */
+.progress-bar.bg-gradient-primary {
+  background-image: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+}
+
+/* ─── 10. Inputs — foco con color primario ───────────────────────────────── */
+.form-control:focus,
+.form-select:focus {
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 2px rgba(14, 165, 233, 0.2) !important;
+}
+
+/* ─── 11. SweetAlert2 — botón confirmar ─────────────────────────────────── */
+.swal2-confirm {
+  background-color: #1e6091 !important;
+  border-color: #1e6091 !important;
+}
+.swal2-confirm:focus {
+  box-shadow: 0 0 0 3px rgba(30, 96, 145, 0.35) !important;
+}
+
+/* ─── 12. Links y estados hover generales ────────────────────────────────── */
+a.text-info {
+  color: #0ea5e9 !important;
+}
+
+/* ─── 13. Navbar blur (top) — color activo de links ─────────────────────── */
+.navbar .nav-link.active,
+.navbar .nav-link:hover {
+  color: #1e6091 !important;
+}
+
+/* ─── 14. Fixed plugin — botón activo del configurador ──────────────────── */
+.fixed-plugin .btn.active,
+.fixed-plugin .btn:active {
+  background-image: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+}
+
+/* ─── 15. Sidenav — color selector del configurador ────────────────────────
+   El badge de color "primary" en el configurador visual                    */
+.badge.filter.bg-gradient-primary {
+  background-image: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+}
+
+/* ─── 16. Sidebar — iconos visibles ─────────────────────────────────────────
+   El CSS base fuerza color:#fff;opacity:.8 en .icon-shape i.
+   Con sidebar blanco → blanco sobre blanco = invisible.
+   ESTRATEGIA: cambiar el fondo del box inactivo a un azul suave
+   para que los iconos blancos sean visibles; activo usa gradiente completo.  */
+
+/* Box inactivo → fondo azul suave (icons blancos visibles sobre él) */
+.sidenav .navbar-nav .nav-link:not(.active) .icon {
+  background:       rgba(30, 96, 145, 0.12) !important;
+  background-image: none !important;
+}
+
+/* Box activo → gradiente azul océano (ya definido arriba, refuerzo) */
+.sidenav .navbar-nav .nav-link.active .icon {
+  background:       linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+  background-image: linear-gradient(310deg, #1a3c5e, #0ea5e9) !important;
+}
+
+/* Opacidad: .icon-shape i pone opacity:.8 → forzar 1 para nitidez */
+.sidenav .navbar-nav .nav-link .icon i {
+  opacity: 1 !important;
+  /* FA SVG mode: currentColor hereda de aquí */
+  color: #fff !important;
+}
+
+/* FA inline-SVG: los <path> usan fill="currentColor" */
+.sidenav .navbar-nav .nav-link .icon i svg path,
+.sidenav .navbar-nav .nav-link .icon svg path {
+  fill: currentColor !important;
+}
+
+/* ─── 17. Sidebar — scroll cuando hay muchos items ─────────────────────────
+   Evita que items del final queden cortados y floten visualmente.           */
+#sidenav-collapse-main {
+  overflow-y: auto;
+  max-height: calc(100vh - 90px);
+}
+#sidenav-collapse-main::-webkit-scrollbar { width: 4px; }
+#sidenav-collapse-main::-webkit-scrollbar-thumb {
+  background: rgba(30, 96, 145, 0.2);
+  border-radius: 4px;
+}
